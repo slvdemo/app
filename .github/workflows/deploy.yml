@@ -22,7 +22,7 @@ jobs:
             username: ${{ env.APP_DEPLOY_USER }}
             key: ${{ env.APP_DEPLOY_SSH_PRIVATE_KEY }}
             source: "deploy"
-            target: "~/deploy"
+            target: "~/"
         - name: Deploy SLV Operator and App
           uses: appleboy/ssh-action@v1.0.3
           env:
@@ -31,6 +31,7 @@ jobs:
             host: ${{ env.APP_DEPLOY_HOST }}
             username: ${{ env.APP_DEPLOY_USER }}
             key: ${{ env.APP_DEPLOY_SSH_PRIVATE_KEY }}
+            envs: SLV_ENV_SECRET_KEY
             script: |
               echo "Deploying the SLV Operator and App"
               slv vault deref -v deploy/deploy.slv.yaml --path deploy/slv.yaml
