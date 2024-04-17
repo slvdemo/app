@@ -33,6 +33,5 @@ jobs:
             key: ${{ env.APP_DEPLOY_SSH_PRIVATE_KEY }}
             script: |
               echo "Deploying the SLV Operator and App"
-              slv vault deref -v deploy.slv.yaml --path deploy/slv.yaml
+              slv vault deref -v deploy/deploy.slv.yaml --path deploy/slv.yaml
               kubectl apply -f deploy
-              rm -rf deploy
