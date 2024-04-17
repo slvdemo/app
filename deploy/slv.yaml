@@ -1,0 +1,79 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: slv
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: slv-k8s-operator
+  namespace: slv
+automountServiceAccountToken: true
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: slv-k8s-operator-clusterrole
+rules:
+  - apiGroups: ["slv.oss.amagi.com"]
+    resources: ["slvs"]
+    verbs:
+      - "get"
+      - "list"
+      - "watch"
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs:
+      - "create"
+      - "get"
+      - "list"
+      - "update"
+      - "delete"
+      - "watch"
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: slv-k8s-operator-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: slv-k8s-operator
+  namespace: slv
+roleRef:
+  kind: ClusterRole
+  name: slv-k8s-operator-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slv-k8s-operator
+  namespace: slv
+  labels:
+    app: slv-k8s-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slv-k8s-operator
+  template:
+    metadata:
+      labels:
+        app: slv-k8s-operator
+    spec:
+      serviceAccountName: slv-k8s-operator
+      containers:
+      - name: slv-k8s-operator
+        image: ghcr.io/amagioss/slv/slv-k8s-operator:latest
+        resources:
+          limits:
+            cpu: "1"
+            memory: "500Mi"
+        env:
+          - name: SLV_ENV_SECRET_KEY
+            value: "{{SLV_VID_4ZYWR7UMV3AH3EY7MT4MMMCKUZ3X7VLR7UG57QTMBZFROGVN.K8S_SECRET_KEY}}"

@@ -1,0 +1,38 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+    deploy:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+        - name: Load Secrets using SLV
+          uses: amagioss/slv-action@main
+          with:
+            vault: deploy/deploy.slv.yaml
+            env-secret-key: ${{ secrets.SLV_ENV_SECRET_KEY }}
+            prefix: "APP_DEPLOY_"
+        - name: copy file via ssh key
+          uses: appleboy/scp-action@v0.1.7
+          with:
+            host: $APP_DEPLOY_HOST
+            username: $APP_DEPLOY_USER
+            key: $APP_DEPLOY_SSH_PRIVATE_KEY
+            source: "deploy/"
+            target: ~/deploy/
+        - name: Deploy SLV Operator and App
+          uses: appleboy/ssh-action@v1.0.3
+          env:
+            SLV_ENV_SECRET_KEY: ${{ secrets.SLV_ENV_SECRET_KEY }}
+          with:
+            host: $APP_DEPLOY_HOST
+            username: $APP_DEPLOY_USER
+            key: $APP_DEPLOY_SSH_PRIVATE_KEY
+            script: |
+              echo "Deploying the SLV Operator and App"
+              slv vault deref -v deploy.slv.yaml --path deploy/slv.yaml
+              kubectl apply -f deploy
+              rm -rf deploy

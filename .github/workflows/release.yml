@@ -10,7 +10,7 @@ on:
             - main
 
 jobs:
-    release-container-image:
+    release:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout Code
@@ -34,4 +34,3 @@ jobs:
             tags: |
               ghcr.io/${{ github.repository }}:latest
               ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-    
