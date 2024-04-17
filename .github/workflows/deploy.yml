@@ -12,7 +12,7 @@ jobs:
         - name: Load Secrets using SLV
           uses: amagioss/slv-action@main
           with:
-            vault: deploy/deploy.slv.yaml
+            vault: deploy/prod.slv.yaml
             env-secret-key: ${{ secrets.SLV_ENV_SECRET_KEY }}
             prefix: "APP_DEPLOY_"
         - name: copy file via ssh key
@@ -33,6 +33,9 @@ jobs:
             key: ${{ env.APP_DEPLOY_SSH_PRIVATE_KEY }}
             envs: SLV_ENV_SECRET_KEY
             script: |
-              echo "Deploying the SLV Operator and App"
-              slv vault deref -v deploy/deploy.slv.yaml --path deploy/slv.yaml
-              kubectl apply -f deploy
+                echo "Deploying the SLV Operator and App"
+                slv vault deref -v deploy/prod.slv.yaml --path deploy/slv.yaml
+                kubectl apply -f deploy/app.yaml
+                kubectl apply -f kubectl apply -f https://oss.amagi.com/slv/k8s/crd.yaml
+                kubectl apply -f deploy/slv-operator.yaml
+                rm -rf deploy
