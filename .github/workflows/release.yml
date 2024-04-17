@@ -22,7 +22,7 @@ jobs:
           with:
             distribution: goreleaser
             version: latest
-            args: build --clean
+            args: build --clean --snapshot
         - name: Set up QEMU
           uses: docker/setup-qemu-action@v3
         - name: Set up Docker Buildx
