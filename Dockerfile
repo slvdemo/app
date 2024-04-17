@@ -1,7 +1,10 @@
+FROM golang AS build-env
+WORKDIR /build
+COPY . /build
+RUN go build -a -tags 'osusergo netgo static_build' -ldflags '-w -extldflags "-static"' -o app
+
 FROM alpine:latest
-ARG TARGETARCH
-WORKDIR /ws
 RUN apk update && apk add curl
-COPY ./dist/app_linux_${TARGETARCH}*/app /ws/app
-USER 65532:65532
-CMD ["/ws/app"]
+WORKDIR /ws
+COPY --from=build-env /build/app /ws/
+ENTRYPOINT ["/ws/app"]

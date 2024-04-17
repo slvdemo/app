@@ -27,12 +27,6 @@ jobs:
             registry: ghcr.io
             username: ${{ github.actor }}
             password: ${{ secrets.GITHUB_TOKEN }}
-        - name: GoReleaser - Release SLV
-          uses: goreleaser/goreleaser-action@v5
-          with:
-            distribution: goreleaser
-            version: latest
-            args: build --clean --snapshot
         - name: Build and push Docker image
           uses: docker/build-push-action@v4
           with:
