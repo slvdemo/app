@@ -32,7 +32,7 @@ func getSecret(clientset *kubernetes.Clientset) gin.HandlerFunc {
 		name := ctx.Param("name")
 		secret, err := clientset.CoreV1().Secrets(getNamespace()).Get(context.Background(), name, metav1.GetOptions{})
 		if err != nil {
-			ctx.AbortWithStatus(http.StatusNotFound)
+			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 		ctx.JSON(http.StatusOK, gin.H{"secret": secret.Data})
