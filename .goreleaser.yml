@@ -1,0 +1,8 @@
+builds:
+  - main: ./app
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags: '-extldflags "-static"'

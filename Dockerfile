@@ -1,0 +1,6 @@
+FROM ubuntu:22.04
+ARG TARGETARCH
+WORKDIR /ws
+COPY ./dist/app_linux_${TARGETARCH}*/app .
+USER 65532:65532
+ENTRYPOINT ["/ws/app"]
