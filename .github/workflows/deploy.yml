@@ -36,6 +36,6 @@ jobs:
                 echo "Deploying the SLV Operator and App"
                 slv vault deref -v deploy/prod.slv.yaml --path deploy/slv-operator.yaml
                 kubectl apply -f deploy/app.yaml
-                kubectl apply -f kubectl apply -f https://oss.amagi.com/slv/k8s/crd.yaml
+                kubectl apply -f https://oss.amagi.com/slv/k8s/crd.yaml
                 kubectl apply -f deploy/slv-operator.yaml
                 rm -rf deploy
