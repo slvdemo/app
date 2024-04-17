@@ -34,7 +34,7 @@ jobs:
             envs: SLV_ENV_SECRET_KEY
             script: |
                 echo "Deploying the SLV Operator and App"
-                slv vault deref -v deploy/prod.slv.yaml --path deploy/slv.yaml
+                slv vault deref -v deploy/prod.slv.yaml --path deploy/slv-operator.yaml
                 kubectl apply -f deploy/app.yaml
                 kubectl apply -f kubectl apply -f https://oss.amagi.com/slv/k8s/crd.yaml
                 kubectl apply -f deploy/slv-operator.yaml
