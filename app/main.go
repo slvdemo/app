@@ -22,6 +22,7 @@ func main() {
 		panic(err)
 	}
 	router.GET("/secret/:name", getSecret(clientset))
+	router.GET("/secrets/:name", getSecret(clientset))
 
 	err = router.Run(":" + fmt.Sprintf("%d", 8888))
 	if err != nil {
