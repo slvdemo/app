@@ -5,17 +5,44 @@ on:
         paths-ignore: 
             - 'README.md'
             - 'LICENSE'
+            - '.dockerignore'
             - '.gitignore'
-            - '.github/deploy.yml'
-        branches:
-            - main
+        tags:
+            - '*'
 
 jobs:
-    release:
+    github-release:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout Code
           uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: Set up Go
+          uses: actions/setup-go@v5
+        - name: Run GoReleaser
+          uses: goreleaser/goreleaser-action@v5
+          with:
+            distribution: goreleaser
+            version: latest
+            args: release --clean
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            
+    docker-release:
+      runs-on: ubuntu-latest
+      needs: github-release
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+        - name: Download releases
+          uses: robinraju/release-downloader@v1.10
+          with:
+            tag: ${{ github.ref_name }}
+            fileName: "*linux*.zip"
+            token: ${{ secrets.GITHUB_TOKEN }}
+        - name: Rename files
+          run: for file in ./*.zip; do mv "$file" "${file#*linux_}"; done
         - name: Set up QEMU
           uses: docker/setup-qemu-action@v3
         - name: Set up Docker Buildx
@@ -35,3 +62,4 @@ jobs:
             tags: |
               ghcr.io/${{ github.repository }}:latest
               ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+    

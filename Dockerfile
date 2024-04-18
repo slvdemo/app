@@ -1,10 +1,9 @@
-FROM golang AS build-env
+FROM alpine AS build-env
+ARG TARGETARCH
 WORKDIR /build
-COPY . /build
-RUN go build -a -tags 'osusergo netgo static_build' -ldflags '-w -extldflags "-static"' -o app ./app
+COPY ./*.zip .
+RUN unzip $TARGETARCH.zip
 
-FROM alpine:latest
-RUN apk update && apk add curl
-WORKDIR /ws
-COPY --from=build-env /build/app /ws/
-ENTRYPOINT ["/ws/app"]
+FROM cgr.dev/chainguard/static:latest
+COPY --from=build-env /build/app /app
+ENTRYPOINT ["/app"]
