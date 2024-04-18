@@ -1,3 +1,3 @@
-# Demo API
+# SLV K8s Demo App
 
-A demo API written in Go
+An App writen in Go that reads K8s Secrets for SLV Demo

@@ -15,7 +15,7 @@ jobs:
             vault: deploy/prod.slv.yaml
             env-secret-key: ${{ secrets.SLV_ENV_SECRET_KEY }}
             prefix: "APP_DEPLOY_"
-        - name: copy file via ssh key
+        - name: Copy Deployment Files to Remote Host
           uses: appleboy/scp-action@v0.1.7
           with:
             host: ${{ env.APP_DEPLOY_HOST }}
