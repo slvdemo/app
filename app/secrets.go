@@ -2,11 +2,8 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
-	"io"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -38,16 +35,10 @@ func getSecret(clientset *kubernetes.Clientset) gin.HandlerFunc {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
-		secretsMap := make(map[string]string)
-		for key, value := range secret.StringData {
-			decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(value))
-			secretValue, err := io.ReadAll(decoder)
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
-			}
-			secretsMap[key] = string(secretValue)
+		secretStrMap := make(map[string]string)
+		for key, value := range secret.Data {
+			secretStrMap[key] = string(value)
 		}
-		ctx.JSON(http.StatusOK, gin.H{"secret": secretsMap})
+		ctx.JSON(http.StatusOK, gin.H{"secret": secretStrMap})
 	}
 }
