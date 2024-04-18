@@ -39,6 +39,6 @@ func getSecret(clientset *kubernetes.Clientset) gin.HandlerFunc {
 		for key, value := range secret.Data {
 			secretStrMap[key] = string(value)
 		}
-		ctx.JSON(http.StatusOK, gin.H{"secret": secretStrMap})
+		ctx.JSON(http.StatusOK, secretStrMap)
 	}
 }
