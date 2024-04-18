@@ -38,7 +38,7 @@ func getSecret(clientset *kubernetes.Clientset) gin.HandlerFunc {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
-		secretsMap := secret.Data
+		secretsMap := make(map[string]string)
 		for key, value := range secret.StringData {
 			decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(value))
 			secretValue, err := io.ReadAll(decoder)
@@ -46,7 +46,7 @@ func getSecret(clientset *kubernetes.Clientset) gin.HandlerFunc {
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			secretsMap[key] = secretValue
+			secretsMap[key] = string(secretValue)
 		}
 		ctx.JSON(http.StatusOK, gin.H{"secret": secretsMap})
 	}
