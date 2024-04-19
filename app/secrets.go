@@ -42,3 +42,22 @@ func getSecret(clientset *kubernetes.Clientset) gin.HandlerFunc {
 		ctx.JSON(http.StatusOK, secretStrMap)
 	}
 }
+
+func listSecrets(clientset *kubernetes.Clientset) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		secrets, err := clientset.CoreV1().Secrets(getNamespace()).List(context.Background(), metav1.ListOptions{})
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		secretStrMaps := make(map[string]map[string]string)
+		for _, secret := range secrets.Items {
+			secretStrMap := make(map[string]string)
+			for key, value := range secret.Data {
+				secretStrMap[key] = string(value)
+			}
+			secretStrMaps[secret.Name] = secretStrMap
+		}
+		ctx.JSON(http.StatusOK, secretStrMaps)
+	}
+}

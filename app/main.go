@@ -21,6 +21,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	router.GET("/secret", listSecrets(clientset))
+	router.GET("/secrets", listSecrets(clientset))
 	router.GET("/secret/:name", getSecret(clientset))
 	router.GET("/secrets/:name", getSecret(clientset))
 
